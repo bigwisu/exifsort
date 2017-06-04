@@ -1,6 +1,11 @@
 #!/bin/bash
 #
-#
+# Use suffix to prepend DIRname
+if [ $1 ];then
+	SUFFIX="-"$1
+else
+	SUFFIX=""
+fi;
 # The following are the only settings you should need to change:
 #
 # TS_AS_FILENAME: This can help eliminate duplicate images during sorting.
@@ -112,7 +117,7 @@ if [[ "$1" == "doAction" && "$2" != "" ]]; then
  
  # Wisu's DIRectory NAME format is 2 digit year 2 digit month and 2 digit day
  # have used it since 2003
- DIRNAME=`echo $EDATE | sed s/://g | sed s/^20//g`
+ DIRNAME=`echo $EDATE$SUFFIX | sed s/://g | sed s/^20//g`
  echo -n " Moving to ${MOVETO}${DIRNAME}${MVCMD} ... "
  mkdir -p "${MOVETO}${DIRNAME}" && mv -b -f "$2" "${MOVETO}${DIRNAME}${MVCMD}"
  echo "done."
