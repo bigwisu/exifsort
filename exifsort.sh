@@ -109,9 +109,10 @@ if [[ "$1" == "doAction" && "$2" != "" ]]; then
  echo " Will rename to $UDSTAMP.$EXT"
  MVCMD="/$UDSTAMP.$EXT"
  fi;
- # DIRectory NAME for the file move
- # sed issue for y command fix provided by thomas
- DIRNAME=`echo $EDATE | sed y-:-/-`
+ 
+ # Wisu's DIRectory NAME format is 2 digit year 2 digit month and 2 digit day
+ # have used it since 2003
+ DIRNAME=`echo $EDATE | sed s/://g | sed s/^20//g`
  echo -n " Moving to ${MOVETO}${DIRNAME}${MVCMD} ... "
  mkdir -p "${MOVETO}${DIRNAME}" && mv -b -f "$2" "${MOVETO}${DIRNAME}${MVCMD}"
  echo "done."
