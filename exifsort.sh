@@ -1,17 +1,11 @@
 #!/bin/bash
 #
-# Use suffix to prepend DIRname
-if [ $1 ];then
-	SUFFIX="-"$1
-else
-	SUFFIX=""
-fi;
 # The following are the only settings you should need to change:
 #
 # TS_AS_FILENAME: This can help eliminate duplicate images during sorting.
 # TRUE: File will be renamed to the Unix timestamp and its extension.
 # FALSE (any non-TRUE value): Filename is unchanged.
-TS_AS_FILENAME=TRUE
+TS_AS_FILENAME=FALSE
 #
 # USE_LMDATE: If this is TRUE, images without EXIF data will have their Last Modified file
 # timestamp used as a fallback. If FALSE, images without EXIF data are put in noexif/ for
@@ -72,7 +66,7 @@ MOVETO=""
 if [[ "$1" == "doAction" && "$2" != "" ]]; then
  # Check for EXIF and process it
  echo -n ": Checking EXIF... "
- DATETIME=`identify -verbose "$2" | grep "exif:DateTime:" | awk -F' ' '{print $2" "$3}'`
+ DATETIME=`identify -verbose "$2" | grep "exif:DateTimeOriginal:" | awk -F' ' '{print $2" "$3}'`
  if [[ "$DATETIME" == "" ]]; then
  echo "not found."
  if [[ $USE_LMDATE == "TRUE" ]]; then
@@ -82,7 +76,7 @@ if [[ "$1" == "doAction" && "$2" != "" ]]; then
  echo " Using LMDATE: $DATETIME"
  else
  echo " Moving to ./noexif/"
- mkdir -p "${MOVETO}noexif" && mv -b -f "$2" "${MOVETO}noexif"
+ mkdir -p "${MOVETO}noexif" && mv -v -f "$2" "${MOVETO}noexif"
  exit
  fi;
  else
@@ -114,12 +108,11 @@ if [[ "$1" == "doAction" && "$2" != "" ]]; then
  echo " Will rename to $UDSTAMP.$EXT"
  MVCMD="/$UDSTAMP.$EXT"
  fi;
- 
- # Wisu's DIRectory NAME format is 2 digit year 2 digit month and 2 digit day
- # have used it since 2003
- DIRNAME=`echo $EDATE$SUFFIX | sed s/://g | sed s/^20//g`
+ # DIRectory NAME for the file move
+ # sed issue for y command fix provided by thomas
+ DIRNAME=`echo $EDATE | sed s/://g | sed s/^20//g`
  echo -n " Moving to ${MOVETO}${DIRNAME}${MVCMD} ... "
- mkdir -p "${MOVETO}${DIRNAME}" && mv -b -f "$2" "${MOVETO}${DIRNAME}${MVCMD}"
+ mkdir -p "${MOVETO}${DIRNAME}" && mv -v -f "$2" "${MOVETO}${DIRNAME}${MVCMD}"
  echo "done."
  echo ""
  exit
